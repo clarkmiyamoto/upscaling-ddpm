@@ -2,7 +2,10 @@ import torch
 import torchvision as tv
 from torch.utils.data import DataLoader
 
-def get_data(dataset: str, batch_size: int, num_workers: int = 4) -> tuple[DataLoader, DataLoader, int]:
+def get_data(dataset: str, 
+             batch_size: int, 
+             num_workers: int = 4,
+             train_size: int = None) -> tuple[DataLoader, DataLoader, int]:
     '''
     Get the dataloader for the dataset.
     Args:
@@ -15,19 +18,21 @@ def get_data(dataset: str, batch_size: int, num_workers: int = 4) -> tuple[DataL
         channels (int): the number of channels in the dataset
     '''
     if dataset == "MNIST":
-        return get_MNIST(batch_size, num_workers)
+        return get_MNIST(batch_size, num_workers, train_size)
     elif dataset == "FashionMNIST":
-        return get_FashionMNIST(batch_size, num_workers)
+        return get_FashionMNIST(batch_size, num_workers, train_size)
     elif dataset == "CelebA":
-        return get_CelebA(batch_size, num_workers)
+        return get_CelebA(batch_size, num_workers, train_size)
 
-def get_MNIST(batch_size: int, num_workers: int = 4) -> DataLoader:
+def get_MNIST(batch_size: int, num_workers: int = 4, train_size: int = None) -> DataLoader:
     transform = tv.transforms.Compose([
         tv.transforms.ToTensor(),
         tv.transforms.Normalize(0.5, 0.5),  # [-1,1] for all channels if grayscale; for RGB use per-channel tuples
     ])
 
     dataset_train = tv.datasets.MNIST(root="./data", train=True, download=True, transform=transform)
+    if train_size is not None:
+        dataset_train = torch.utils.data.Subset(dataset_train, list(range(0, train_size)))
     dataset_val = tv.datasets.MNIST(root="./data", train=False, download=True, transform=transform)
     dataloader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     dataloader_val = DataLoader(dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
@@ -36,13 +41,15 @@ def get_MNIST(batch_size: int, num_workers: int = 4) -> DataLoader:
     
     return dataloader_train, dataloader_val, channels
 
-def get_FashionMNIST(batch_size: int, num_workers: int = 4) -> DataLoader:
+def get_FashionMNIST(batch_size: int, num_workers: int = 4, train_size: int = None) -> DataLoader:
     transform = tv.transforms.Compose([
         tv.transforms.ToTensor(),
         tv.transforms.Normalize(0.5, 0.5),  # [-1,1] for all channels if grayscale; for RGB use per-channel tuples
     ])
 
     dataset_train = tv.datasets.FashionMNIST(root="./data", train=True, download=True, transform=transform)
+    if train_size is not None:
+        dataset_train = torch.utils.data.Subset(dataset_train, list(range(0, train_size)))
     dataset_val = tv.datasets.FashionMNIST(root="./data", train=False, download=True, transform=transform)
     dataloader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     dataloader_val = DataLoader(dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
@@ -51,14 +58,15 @@ def get_FashionMNIST(batch_size: int, num_workers: int = 4) -> DataLoader:
     
     return dataloader_train, dataloader_val, channels
 
-def get_CelebA(batch_size: int, num_workers: int = 4) -> DataLoader:
+def get_CelebA(batch_size: int, num_workers: int = 4, train_size: int = None) -> DataLoader:
     transform = tv.transforms.Compose([
         tv.transforms.ToTensor(),
         tv.transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     ])
 
     dataset_train = tv.datasets.CelebA(root="./data", split="train", download=True, transform=transform)
-    dataset_train = torch.utils.data.Subset(dataset_train, list(range(0, 80000)))
+    if train_size is not None:
+        dataset_train = torch.utils.data.Subset(dataset_train, list(range(0, train_size)))
     # dataset_val = tv.datasets.CelebA(root="./data", split="test", download=True, transform=transform)
     dataloader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     # dataloader_val = DataLoader(dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
