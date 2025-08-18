@@ -70,5 +70,6 @@ if __name__ == "__main__":
                 print(f"epoch {epoch} iter {it+1}: {loss.item():.4f}")
 
         # Save example images
-        save_images(model, dl_val, filename=f"val_{args.dataset}_epoch{epoch}")
+        if dl_val is not None:
+            save_images(model, dl_val, filename=f"val_{args.dataset}_epoch{epoch}")
         save_images(model, dl_train, filename=f"train_{args.dataset}_epoch{epoch}")
