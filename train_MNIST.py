@@ -24,8 +24,7 @@ if __name__ == "__main__":
     dl = data.get_MNIST(batch_size)
     
     # Model, diffusion
-    model = UNetSR2x(in_ch=1, base=96, out_ch=1).to(device)
-
+    model = UNetSR2x(in_ch=1, base=16, out_ch=1).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
     mode = "checkerboard"  # or "dsu"
 
