@@ -57,7 +57,7 @@ def get_CelebA(batch_size: int, num_workers: int = 4) -> DataLoader:
     ])
 
     dataset_train = tv.datasets.CelebA(root="./data", split="train", download=True, transform=transform)
-    dataset_val = tv.datasets.CelebA(root="./data", split="valid", download=True, transform=transform)
+    dataset_val = tv.datasets.CelebA(root="./data", split="test", download=True, transform=transform)
     dataloader_train = DataLoader(dataset_train, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True)
     dataloader_val = DataLoader(dataset_val, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
     
