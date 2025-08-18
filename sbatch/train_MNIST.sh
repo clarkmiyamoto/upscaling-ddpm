@@ -15,4 +15,4 @@ cd /jet/home/cmiyamot/upscaling-ddpm
 
 
 # Run code
-python train_MNIST.py
+python train.py --dataset MNIST

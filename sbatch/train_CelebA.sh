@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=FashionMNIST
+#SBATCH --job-name=CelebA
 #SBATCH --nodes=1
 #SBATCH -p GPU
 #SBATCH -t 2:00:00
@@ -16,4 +16,4 @@ cd /jet/home/cmiyamot/upscaling-ddpm
 
 
 # Run code
-python train.py --dataset FashionMNIST
+python train.py --dataset CelebA --batch_size 64
