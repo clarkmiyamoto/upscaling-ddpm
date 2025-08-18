@@ -1,10 +1,11 @@
 #!/bin/bash
 
-#SBATCH --job-name=train
+#SBATCH --job-name=MNIST
 #SBATCH --nodes=1
 #SBATCH -p GPU
 #SBATCH -t 2:00:00
-#SBATCH --gpus=v100-16:8 
+#SBATCH --gpus=v100-16:1
+#SBATCH --output=/jet/home/cmiyamot/upscaling-ddpm/sbatch/logging/MNIST_%x.o%j
 
 set -x  # Echo commands to stdout
 
