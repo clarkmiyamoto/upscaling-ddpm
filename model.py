@@ -6,7 +6,7 @@ from utils import match_spatial
 
 
 
-class ConvBNAct(jit.ScriptModule):
+class ConvBNAct(nn.Module):
     def __init__(self, c_in, c_out, k=3, s=1, p=1):
         super().__init__()
         self.op = nn.Sequential(
@@ -14,10 +14,9 @@ class ConvBNAct(jit.ScriptModule):
             nn.BatchNorm2d(c_out),
             nn.SiLU(inplace=True),
         )
-    @jit.script_method
     def forward(self, x): return self.op(x)
 
-class ResBlock(jit.ScriptModule):
+class ResBlock(nn.Module):
     def __init__(self, c, expansion=2/3):
         super().__init__()
         mid = max(8, int(c * expansion))
@@ -26,10 +25,10 @@ class ResBlock(jit.ScriptModule):
             nn.Conv2d(mid, c, 3, 1, 1), nn.BatchNorm2d(c)
         )
         self.act = nn.SiLU(inplace=True)
-    @jit.script_method
+
     def forward(self, x): return self.act(x + self.block(x))
 
-class Down(jit.ScriptModule):
+class Down(nn.Module):
     """Stride-2 conv; output ~ ceil(H/2)."""
     def __init__(self, c_in, c_out):
         super().__init__()
@@ -37,16 +36,15 @@ class Down(jit.ScriptModule):
             ConvBNAct(c_in, c_out, 3, 2, 1),
             ResBlock(c_out),
         )
-    @jit.script_method
     def forward(self, x): return self.op(x)
 
-class UpShuffle(jit.ScriptModule):
+class UpShuffle(nn.Module):
     """Up by 2 with PixelShuffle to avoid checkerboard artifacts."""
     def __init__(self, c_in, c_out):
         super().__init__()
         self.pre = nn.Conv2d(c_in, c_out * 4, 3, 1, 1)
         self.post = nn.Sequential(nn.SiLU(inplace=True), ResBlock(c_out))
-    @jit.script_method
+
     def forward(self, x):
         x = self.pre(x)
         x = F.pixel_shuffle(x, 2)
