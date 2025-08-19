@@ -47,27 +47,29 @@ if __name__ == "__main__":
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
     mode = "checkerboard"  # or "dsu"
 
+    scaler = torch.cuda.amp.GradScaler(device)
     for epoch in tqdm(range(epochs)):
-
-        # 
         model.train()
         for it, (x, _) in tqdm(enumerate(dl_train), total=len(dl_train)):
             x = x.to(device)  # (B,C,H,W), arbitrary H,W if your loader provides it
 
-            if mode == "checkerboard":
-                y2x = model(x)
-                # random parity each step
-                loss = loss_checkerboard_consistency(y2x, x, parity=None)
-            else:
-                loss = loss_dsu(model, x, scale_half_mode="ceil")
+            with torch.amp.autocast(device):
+                if mode == "checkerboard":
+                    y2x = model(x)
+                    # random parity each step
+                    loss = loss_checkerboard_consistency(y2x, x, parity=None)
+                else:
+                    loss = loss_dsu(model, x, scale_half_mode="ceil")
 
             opt.zero_grad(set_to_none=True)
-            loss.backward()
+            scaler.scale(loss).backward()
             nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            opt.step()
+            scaler.step(opt)
+            scaler.update()
 
             if (it+1) % 100 == 0:
-                print(f"epoch {epoch} iter {it+1}: {loss.item():.4f}")
+                lv = loss.detach().cpu().numpy()
+                print(f"epoch {epoch} iter {it+1}: {lv.item():.4f}")
 
         # Save example images
         if dl_val is not None:
