@@ -9,5 +9,5 @@ Consider you have a method for evlaulating log-probability over images $p(x)$, w
 
 So we'll use this as the reconstruction metric.
 
-# Contributions
-- Bao Pahm
+# Thanks
+- Bao Pahm 

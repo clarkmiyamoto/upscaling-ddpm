@@ -46,7 +46,7 @@ if __name__ == "__main__":
     model = UNetSR2x(in_ch=channels, base=16, out_ch=channels).to(device)
     opt = torch.optim.AdamW(model.parameters(), lr=lr)
     mode = "checkerboard"  # or "dsu"
-
+    
     scaler = torch.cuda.amp.GradScaler(device)
     for epoch in tqdm(range(epochs)):
         model.train()
