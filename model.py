@@ -50,7 +50,7 @@ class UpShuffle(nn.Module):
         x = F.pixel_shuffle(x, 2)
         return self.post(x)
 
-class UNetSR2x(jit.ScriptModule):
+class UNetSR2x(nn.Module):
     """
     Input:  (B,C,H,W)
     Output: (B,C,2H,2W)
@@ -74,7 +74,6 @@ class UNetSR2x(jit.ScriptModule):
         self.to2x = UpShuffle(base, base)
         self.head = nn.Sequential(nn.Conv2d(base, out_ch, 3, 1, 1), nn.Tanh())
 
-    @jit.script_method
     def forward(self, x):
         B,C,H,W = x.shape
 
