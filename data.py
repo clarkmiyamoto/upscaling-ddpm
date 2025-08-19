@@ -22,7 +22,7 @@ def get_data(dataset: str,
     elif dataset == "FashionMNIST":
         return get_FashionMNIST(batch_size, num_workers, train_size)
     elif dataset == "CelebA":
-        return get_CelebA(batch_size, num_workers, train_size)
+        return get_CelebA(batch_size, num_workers, train_size=80000)
 
 def get_MNIST(batch_size: int, num_workers: int = 4, train_size: int = None) -> DataLoader:
     transform = tv.transforms.Compose([

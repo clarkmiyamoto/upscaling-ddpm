@@ -3,10 +3,10 @@
 #SBATCH --job-name=CelebA
 #SBATCH --nodes=1
 #SBATCH -p GPU
-#SBATCH -t 2:00:00
+#SBATCH -t 0:05:00
 #SBATCH --gpus=v100-16:8
-#SBATCH --output=/jet/home/cmiyamot/upscaling-ddpm/sbatch/logging/FashionMNIST_%x.o%j
-
+#SBATCH --output=/jet/home/cmiyamot/upscaling-ddpm/sbatch/logging/FashionMNIST_%j.out
+#SBATCH --error=/jet/home/cmiyamot/upscaling-ddpm/sbatch/logging/FashionMNIST_%j.err
 
 set -x  # Echo commands to stdout
 
